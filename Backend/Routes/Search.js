@@ -5,7 +5,7 @@ const router = express.Router();
 const searchController = require("../Controllers/Search");
 
 // Route to get Search Names
-router.get("/searchItems", searchController.searchItems);
+router.get("/searchItems/:searchTerm", searchController.searchItems);
 
 module.exports = router;
 

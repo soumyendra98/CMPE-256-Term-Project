@@ -6,8 +6,10 @@ const getAll = async (req, res) => {
     const mostPopular = await Recipe.find({}).sort({rating: -1, review_date: -1}).limit(20);
 
     res.json({ 
-        recently_added: recentlyAdded,
-        most_popular: mostPopular,
+        data: [
+            {type: 'Recently Added', data: recentlyAdded},
+            {type: 'Most Popular', data: mostPopular}
+        ],
         message: "Get All Recipes" 
     });
 }

@@ -1,13 +1,14 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Card from "./Card";
 
 function List({ recipes }) {
     return (
         <div>
-            {recipes.map((recipe, i) => {
+            {recipes.data.map(recipe => {
             return (
+                console.log(recipe.data),
                 <Card
-                key={i}
+                key={recipe.recipe_id}
                 recipe={recipe}
                 />
             );

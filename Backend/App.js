@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 const searchRouter = require("../Backend/Routes/Search");
 const recipeRouter = require("../Backend/Routes/Recipe");
 const {spawn} = require('child_process');
@@ -12,6 +13,7 @@ const app = express();
 
 var PORT = 3000;
 
+app.use(cors());
 app.use(express.json());
 app.use('/', recipeRouter);
 app.use(searchRouter);

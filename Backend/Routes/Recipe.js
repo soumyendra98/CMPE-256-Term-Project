@@ -11,6 +11,6 @@ router.get("/getAll", recipeController.getAll);
 router.get("/getById/:id", recipeController.getById);
 
 // Route to get Recommended Recipes by Name
-router.get("/getRecommended/:name", recipeController.getRecommended);
+router.get("/getRecommended/:searchType&:searchTerm", recipeController.getRecommended);
 
 module.exports = router;

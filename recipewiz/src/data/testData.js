@@ -1,4 +1,4 @@
-const testData = [
+const Data = [
     {
         name: 'Chicken',
         imgPath: '/assets/images/chicken.jpeg',
@@ -21,4 +21,4 @@ const testData = [
     }
 ]
 
-export default testData
+export default Data

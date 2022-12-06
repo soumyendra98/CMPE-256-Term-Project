@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-
+const Review = require("../Models/Review");
 const recipeSchema = new Schema(
   {
     _id: mongoose.Schema.Types.ObjectId,
@@ -8,7 +8,16 @@ const recipeSchema = new Schema(
     recipe_id: { type: String, required: true },
     review_date: { type: Date, required: true },
     rating: { type: Number },
-    review: { type: String },
+    reviews: [
+      {
+        type: {
+          reviewer_id: { type: String, required: true },
+          review_date: { type: Date, required: true },
+          rating: { type: Number },
+          review: { type: String },
+        },
+      },
+    ],
     name: { type: String, required: true },
     minutes: { type: Number, required: true },
     contributor_id: { type: String },
@@ -41,7 +50,7 @@ const recipeSchema = new Schema(
   },
   {
     timestamps: true,
-    collection : 'Food Sample' 
+    collection: "Food Sample",
   }
 );
 

@@ -1,26 +1,31 @@
 import React, { useState, useEffect } from "react";
 import List from "./List";
 import Scroll from "./Scroll";
+import Details from "./Details";
+import Button from "react-bootstrap/Button";
+import Modal from "react-bootstrap/Modal";
 
 function Search({ details }) {
   const [searchfield, setSearchfield] = useState("");
   const [searchType, setSearchTypes] = useState("NAME");
   const [filteredRecipes, setFilteredRecipes] = useState([]);
+  const [modalIsOpen, setIsOpen] = useState(false);
+  const [recipe, setRecipe] = useState({});
 
   useEffect(() => {
     fetch(`http://localhost:3000/getAll`, {
-        method: "GET",
-    }).then((response) => response.json()).then((res)=>{
-        setFilteredRecipes(res.data);
+      method: "GET",
     })
-},[]);
-  
+      .then((response) => response.json())
+      .then((res) => {
+        setFilteredRecipes(res.data);
+      });
+  }, []);
+
   const handleSearch = (e) => {
-      setSearchfield(e.target.value);
-      getSearchedRecipes();
-
+    setSearchfield(e.target.value);
+    getSearchedRecipes();
   };
-
 
   const searchTypes = [
     { label: "Name", value: "NAME" },
@@ -34,31 +39,57 @@ function Search({ details }) {
 
   const getSearchedRecipes = () => {
     if (searchfield.length <= 3) {
-        fetch(`http://localhost:3000/getAll`, {
-            method: "GET",
-        }).then((response) => response.json()).then((res)=>{
-            setFilteredRecipes(res.data);
-        })
-    }else{
-    fetch(
-      `http://localhost:3000/getRecommended/?searchType=${encodeURIComponent(searchType)}&searchTerm=${encodeURIComponent(searchfield)}`,
-      {
+      fetch(`http://localhost:3000/getAll`, {
         method: "GET",
-      }).then((res) => res.json()).then((result) => {
-        setFilteredRecipes(result.data);
-      });
+      })
+        .then((response) => response.json())
+        .then((res) => {
+          setFilteredRecipes(res.data);
+        });
+    } else {
+      fetch(
+        `http://localhost:3000/getRecommended/?searchType=${encodeURIComponent(
+          searchType
+        )}&searchTerm=${encodeURIComponent(searchfield)}`,
+        {
+          method: "GET",
+        }
+      )
+        .then((res) => res.json())
+        .then((result) => {
+          setFilteredRecipes(result.data);
+        });
     }
     console.log("searching for recipes");
+  };
+
+  const getRecipe = (recipe_id) => {
+    fetch(`http://localhost:3000/getById/${encodeURIComponent(recipe_id)}`, {
+      method: "GET",
+    })
+      .then((response) => response.json())
+      .then((res) => {
+        setRecipe(res.recipe_details);
+        if (!modalIsOpen) {
+          setIsOpen(true);
+          console.log(recipe);
+        }
+      });
   };
 
   function searchList() {
     return (
       <Scroll>
-        {   
-            filteredRecipes.map((recipes, i) => {
-                return(<List key={i} recipes={recipes} />)
-            })
-        }
+        {filteredRecipes.map((recipes, i) => {
+          return (
+            <List
+              key={i}
+              recipes={recipes.data}
+              header={recipes.type}
+              getRecipeDetails={getRecipe}
+            />
+          );
+        })}
       </Scroll>
     );
   }
@@ -76,7 +107,9 @@ function Search({ details }) {
           onChange={handleSearchType}
         >
           {searchTypes.map((type, i) => (
-            <option key={i} value={type.value}>{type.label}</option>
+            <option key={i} value={type.value}>
+              {type.label}
+            </option>
           ))}
         </select>
         <input
@@ -87,6 +120,28 @@ function Search({ details }) {
         />
       </div>
       {searchList()}
+      <Modal
+        show={modalIsOpen}
+        onHide={() => setIsOpen(false)}
+        dialogClassName="modal-50w"
+        aria-labelledby="example-custom-modal-styling-title"
+      >
+        <Modal.Header closeButton>
+          <Modal.Title id="example-custom-modal-styling-title">
+            {recipe.name}
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Button
+            onClick={() => {
+              setIsOpen(false);
+            }}
+          >
+            Close
+          </Button>
+          <Details recipe_id={recipe}></Details>
+        </Modal.Body>
+      </Modal>
     </section>
   );
 }
